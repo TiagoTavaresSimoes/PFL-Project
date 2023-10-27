@@ -1,6 +1,27 @@
 :- consult(data).
 :- consult(utils).
 :- consult(board).
+:- consult(configs).
+
+% play/0
+% Starts the game and clears data when it ends 
+play :-
+    configurations(GameState),      
+    game_cycle(GameState),
+    clear_data.
+
+% init_game_state(-GameState)
+% Logic to set up your default game state. Placeholder function; adjust to your needs.
+init_game_state(GameState) :-
+    % Example logic to set up your default game state.
+    % Replace with your actual logic.
+    init_state(10, GameState).
+
+% init_state(+Size, -GameState)
+% Initializes the game state (board) based on the given size.
+init_state(Size, GameState) :-
+    length(GameState, Size),
+    maplist(init_row(Size), GameState).
 
 % main/0
 % Main predicate for game execution.
@@ -11,9 +32,9 @@ main :-
     init_game.
 
 % display_intro/0
-% Displays the game's introduction.
+% Displays the game´s introduction.
 display_intro :-
-    write('Welcome to the Videogame!\n\n'),
+    write('Welcome to Flügelrad!\n\n'),
     write('Follow the instructions and have fun!\n'),
     write('Press enter to continue...\n'),
     clear_buffer.
