@@ -35,4 +35,5 @@ is_valid_move(Player, Move) :-
 place_marble(Player, Position, Board, NewBoard) :-
     % Logic to place a player's marble on a given position and return the updated board
     true.
-
+clear_console:- 
+    write('\33\[2J').
