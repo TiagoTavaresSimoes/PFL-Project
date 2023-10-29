@@ -42,7 +42,7 @@ validate_choice(_) :-
     read_option(Choice).
 
 process_choice(1) :-
-    menu.
+    game_loop.
 
 process_choice(2) :-
     % Need to maybe do another sub-menu after entering help menu to send back to main menu or quit the app.
@@ -52,6 +52,31 @@ process_choice(2) :-
 process_choice(3) :-
     write('Thanks for playing!\n'),
     halt.
+
+clear_console :- write('\e[H\e[2J').
+
+game_loop :-
+    repeat,
+    clear_console,
+    print_board,
+    prompt_for_hexagon_and_direction(Hexagon, Direction),
+    handle_action(Hexagon, Direction).
+
+prompt_for_hexagon_and_direction(Hexagon, Direction) :-
+    write('Enter the hexagon number (1-7) or type \'exit\' to end: '),
+    read(Input),
+    (Input = exit -> Direction = exit ; Hexagon = Input),
+    Hexagon \= exit,
+    write('Rotate clockwise or counterclockwise? (c/cc): '),
+    read(Direction).
+
+handle_action(_, exit) :- 
+    fail. 
+handle_action(Hexagon, Direction) :-
+    (Direction = c -> rotate_hexagon_clockwise(Hexagon) ;
+     Direction = cc -> rotate_hexagon_counterclockwise(Hexagon)),
+    synchronize_neighbors(Hexagon),
+    true.
 
 
 % menu/0
