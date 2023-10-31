@@ -23,6 +23,47 @@ main_menu :-
     read_option(Choice),
     process_choice(Choice).
 
+help_menu:-
+    clear_console,
+    write('==================================\n'),
+    write('       Flugelrad Game Guide       \n'),
+    write('==================================\n\n'),
+    
+    write('Flugelrad is a strategy board game involving marbles and an impeller wheel. Dive into the key rules and strategies:\n\n'),
+    write('When two players turn the wheel, this can be quite constructive, at least if they play a game of Flugelrad.\n'), 
+    write('The game board consists of seven hexagonal spaces, each of which has a hole in its center for the impeller wheel.\n'), 
+    write('The game is played with marbles; each player has their own color.\n'),
+    write('On your turn, you reposition the impeller wheel, then rotate it as far as you like, thus moving up to six marbles at the same time.\n'), 
+    write('The first player to form a contiguous cluster of at least six of their marbles wins.\n'),  
+    write('But beware since you can easily move your opponents marbles as well.\n'),
+    write('-----------------------------------------------------------------------------------------------------------------------------------\n\n'),
+    write('1. Return to Main Menu\n'),
+    write('2. Leave Game\n'),
+    read_help_option(Choice),
+    process_help_choice(Choice).
+
+read_help_option(Choice) :-
+    write('Enter your choice (1 or 2): '),
+    read(Choice),
+    validate_help_choice(Choice).
+
+validate_help_choice(Choice) :-
+    (Choice = 1 ; Choice = 2),
+    !.
+
+validate_help_choice(_) :-
+    write('Invalid choice. Please try again.'), nl,
+    read_help_option(Choice).
+
+process_help_choice(1) :-
+    main_menu.
+
+process_help_choice(2) :-
+    write('Thanks for playing!\n'),
+    halt.
+
+process_choice(2) :-
+    help_menu.
 
 read_option(Choice) :-
     write('Enter your choice (1, 2, or 3): '),
@@ -39,12 +80,12 @@ validate_choice(_) :-
     read_option(Choice).
 
 process_choice(1) :-
-    game_loop.
+    game_type.
+    %game_loop.
 
 process_choice(2) :-
-    % Need to maybe do another sub-menu after entering help menu to send back to main menu or quit the app.
-    help_menu,
-    main_menu.
+    help_menu.
+
 
 process_choice(3) :-
     write('Thanks for playing!\n'),
@@ -75,11 +116,11 @@ handle_action(Hexagon, Direction) :-
 
 % menu/0
 % Main menu
-menu:-  
+game_type:-  
     write('Please select game mode:\n'),
     write('1 - Human vs. Human\n'),
     write('2 - Human vs. Bot\n'),
-    write('3 - Bot vs. Bot\n').
+    write('3 - Bot vs. Bot\n'),
     read_game_option(PlayChoice),
     process_play_choice(PlayChoice).
 
@@ -90,20 +131,23 @@ read_game_option(PlayChoice) :-
 
 process_play_choice(_) :-
     write('Invalid play mode. Please try again.\n'),
-    menu.
+    game_loop.
 
 process_play_choice(1) :-
-    write('Human vs. Human game ...\n').
+    %write('Human vs. Human game ...\n'),
+    game_loop.
     % asserta(player_name(player1, 'João')), 
     % asserta(player_name(player2, 'Pedro')). % testing
     % read_name(player1), 
     % read_name(player2).
 
 process_play_choice(2) :-
-    write('Human vs. Bot game ...\n').
+    %write('Human vs. Bot game ...\n'),
+    game_loop.
 
 process_play_choice(3) :-
-    write('Bot vs. Bot game ...\n').
+    %write('Bot vs. Bot game ...\n'),
+    game_loop.
 
 
 
@@ -119,9 +163,7 @@ process_play_choice(3) :-
 %    init_state(Size, Board),
 %    start_game(Board).
 
-help_menu :-
-    % Just to visualize the help menu for now
-    write('When two players turn the wheel, this can be quite constructive — at least if they play a game of Flügelrad. The game board consists of seven hexagonal spaces, each of which has a hole in its center for the impeller wheel. The game is played with marbles; each player has their own color. On your turn, you reposition the impeller wheel, then rotate it as far as you like, thus moving up to six marbles at the same time. The first player to form a contiguous cluster of at least six of their marbles wins. But beware since you can easily move your opponents marbles as well.').
+
 
 title :-
     write(' _________________________________________________________________________'),nl,
