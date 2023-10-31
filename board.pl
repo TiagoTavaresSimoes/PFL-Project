@@ -118,6 +118,169 @@ print_board :-
     format("            ~w     ~w\n", [H7_3, H7_5]),
     format("             \\ ~w /\n", [H7_4]).
 
+% Connections within the same hexagon
+% formato: connection(Hexagon, Marble, Hexagon, NextMarble)
+
+% Hexagon 1
+connection(1, 1, 1, 2).
+connection(1, 2, 1, 3).
+connection(1, 3, 1, 4).
+connection(1, 4, 1, 5).
+connection(1, 5, 1, 6).
+connection(1, 6, 1, 1).
+
+% Hexagon 2
+connection(2, 1, 2, 2).
+connection(2, 2, 2, 3).
+connection(2, 3, 2, 4).
+connection(2, 4, 2, 5).
+connection(2, 5, 2, 6).
+connection(2, 6, 2, 1).
+
+% Hexagon 3
+connection(3, 1, 3, 2).
+connection(3, 2, 3, 3).
+connection(3, 3, 3, 4).
+connection(3, 4, 3, 5).
+connection(3, 5, 3, 6).
+connection(3, 6, 3, 1).
+
+% Hexagon 4
+connection(4, 1, 4, 2).
+connection(4, 2, 4, 3).
+connection(4, 3, 4, 4).
+connection(4, 4, 4, 5).
+connection(4, 5, 4, 6).
+connection(4, 6, 4, 1).
+
+% Hexagon 5
+connection(5, 1, 5, 2).
+connection(5, 2, 5, 3).
+connection(5, 3, 5, 4).
+connection(5, 4, 5, 5).
+connection(5, 5, 5, 6).
+connection(5, 6, 5, 1).
+
+% Hexagon 6
+connection(6, 1, 6, 2).
+connection(6, 2, 6, 3).
+connection(6, 3, 6, 4).
+connection(6, 4, 6, 5).
+connection(6, 5, 6, 6).
+connection(6, 6, 6, 1).
+
+% Hexagon 7
+connection(7, 1, 7, 2).
+connection(7, 2, 7, 3).
+connection(7, 3, 7, 4).
+connection(7, 4, 7, 5).
+connection(7, 5, 7, 6).
+connection(7, 6, 7, 1).
+
+% Inter-hexagon connections
+% formato: connection(Hexagon, Marble, AdjacentHexagon, AdjacentMarble)
+
+% Between hexagon 1 and 2
+connection(1, 3, 2, 5).
+connection(1, 2, 2, 6).
+connection(1, 4, 2, 6).
+connection(1, 4, 2, 5).
+
+% Between hexagon 1 and 3
+connection(1, 6, 3, 2).
+connection(1, 5, 3, 3).
+connection(1, 5, 3, 1).
+connection(1, 4, 3, 3).
+connection(1, 4, 3, 2).
+
+% Between hexagon 1 and 4
+connection(1, 4, 4, 2).
+connection(1, 4, 4, 6).
+connection(1, 3, 4, 1).
+connection(1, 5, 4, 1).
+
+% Between hexagon 2 and 5
+connection(2, 4, 5, 2).
+connection(2, 4, 5, 6).
+connection(2, 5, 5, 6).
+connection(2, 3, 5, 1).
+
+% Between hexagon 2 and 4
+connection(2, 6, 4, 2).
+connection(2, 5, 4, 1).
+connection(2, 4, 4, 3).
+
+% Between hexagon 3 and 4
+connection(3, 2, 4, 6).
+connection(3, 3, 4, 1).
+connection(3, 3, 4, 5).
+
+% Between hexagon 3 and 6
+connection(3, 4, 6, 6).
+connection(3, 4, 6, 2).
+connection(3, 3, 6, 2).
+connection(3, 3, 6, 1).
+
+% Between hexagon 4 and 5
+connection(4, 3, 5, 1).
+connection(4, 3, 5, 5).
+connection(4, 4, 5, 5).
+connection(4, 2, 5, 6).
+
+% Between hexagon 4 and 6
+connection(4, 5, 6, 1).
+connection(4, 5, 6, 3).
+connection(4, 6, 6, 2).
+
+% Between hexagon 4 and 7
+connection(4, 3, 7, 2).
+connection(4, 3, 7, 1).
+connection(4, 4, 7, 6).
+connection(4, 5, 7, 6).
+
+% Between hexagon 5 and 7
+connection(5, 4, 7, 2).
+connection(5, 5, 7, 3).
+
+% Between hexagon 6 and 7
+connection(6, 2, 7, 6).
+connection(6, 3, 7, 5).
+
+
+has_six_in_a_row(Type) :-
+    hexagon(Hex, Marbles),
+    nth1(Pos, Marbles, Marble),
+    Marble = Type,
+    dfs(Hex, Pos, Type, 1, [(Hex, Pos)], _),
+    !. % Cut to stop searching after first solution
+
+% Depth First Search 
+dfs(_, _, _, 6, Visited, Visited). % Base case: when 6 marbles are visited
+dfs(Hex, Pos, Type, Depth, VisitedSoFar, Visited) :-
+    % Current marble
+    hexagon(Hex, Marbles),
+    nth1(Pos, Marbles, Marble),
+    Marble = Type,
+    % Find the connections of the current marble
+    findall((NextHex, NextPos),
+            (connection(Hex, Pos, NextHex, NextPos),
+             hexagon(NextHex, NextMarbles),
+             nth1(NextPos, NextMarbles, NextMarble),
+             NextMarble = Type),
+            Neighbors),
+    % Traverse neighbors
+    member((NeighborHex, NeighborPos), Neighbors),
+    \+ member((NeighborHex, NeighborPos), VisitedSoFar),
+    NewDepth is Depth + 1,
+    dfs(NeighborHex, NeighborPos, Type, NewDepth, [(NeighborHex, NeighborPos)|VisitedSoFar], Visited).
+
+
+
+
+
+
+
+
 
 
 
