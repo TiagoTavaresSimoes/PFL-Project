@@ -34,9 +34,6 @@ validate_choice(Choice) :-
     (Choice = 1 ; Choice = 2 ; Choice = 3),
     !.
 
-
-
-
 validate_choice(_) :-
     write('Invalid choice. Please try again.'), nl,
     read_option(Choice).
@@ -53,30 +50,27 @@ process_choice(3) :-
     write('Thanks for playing!\n'),
     halt.
 
-clear_console :- write('\e[H\e[2J').
-
 game_loop :-
-    repeat,
     clear_console,
     print_board,
     prompt_for_hexagon_and_direction(Hexagon, Direction),
-    handle_action(Hexagon, Direction).
+    ( Direction = exit -> true ;
+      handle_action(Hexagon, Direction),
+      game_loop ).
 
 prompt_for_hexagon_and_direction(Hexagon, Direction) :-
     write('Enter the hexagon number (1-7) or type \'exit\' to end: '),
     read(Input),
-    (Input = exit -> Direction = exit ; Hexagon = Input),
-    Hexagon \= exit,
-    write('Rotate clockwise or counterclockwise? (c/cc): '),
-    read(Direction).
+    ( Input = exit -> Direction = exit, Hexagon = _ ;
+      Hexagon = Input,
+      write('Rotate clockwise or counterclockwise? (c/cc): '),
+      read(Direction) ).
 
-handle_action(_, exit) :- 
-    fail. 
+handle_action(_, exit). 
 handle_action(Hexagon, Direction) :-
     (Direction = c -> rotate_hexagon_clockwise(Hexagon) ;
      Direction = cc -> rotate_hexagon_counterclockwise(Hexagon)),
-    synchronize_neighbors(Hexagon),
-    true.
+    synchronize_neighbors(Hexagon).
 
 
 % menu/0
