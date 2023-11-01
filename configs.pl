@@ -190,6 +190,9 @@ game_loop_human_vs_bot :-
 %    game_loop_bot_vs_bot.
 
 game_loop_bot_vs_bot :-
+    clear_console,
+    print_board,
+    
     % Bot 1's move
     bot_move('Bot 1', Hexagon1, Direction1),
     %display_bot_move('Bot 1', Hexagon1, Direction1),
