@@ -123,6 +123,8 @@ bot_move(Hexagon, Direction) :-
     random(RandomFloat),
     Hexagon is round(1 + RandomFloat * (7 - 1)),
     random_member(Direction, [c, cc]).
+    %write('Bot chose hexagon: '), write(Hexagon), nl,
+    %write('Bot chose direction: '), write(Direction), nl.
 
 
 game_type:-  
@@ -153,8 +155,12 @@ game_loop_human_vs_bot :-
     prompt_for_hexagon_and_direction(Hexagon, Direction),
     ( Direction = exit -> true ;
       handle_action(Hexagon, Direction),
+      clear_console,
       write('Bot\'s turn:\n'),
       bot_move(BotHexagon, BotDirection),
+      write('Bot chose hexagon: '), write(BotHexagon), nl,
+      write('Bot chose direction: '), write(BotDirection), nl,
+      sleep(2), % Pause for 2 seconds to let the user see the bot's move
       handle_action(BotHexagon, BotDirection),
       game_loop_human_vs_bot ).
 
