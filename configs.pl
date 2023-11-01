@@ -170,8 +170,15 @@ game_loop_bot_vs_bot :-
     clear_console,
     print_board,
     bot_move(Hexagon, Direction),
+    display_bot_move(Hexagon, Direction), % Display the bot's move
+    sleep(2),
     handle_action(Hexagon, Direction),
     game_loop_bot_vs_bot.
+
+display_bot_move(Hexagon, Direction) :-
+    write('Bot chose hexagon: '), write(Hexagon), nl,
+    write('Bot chose direction: '), write(Direction), nl.
+
 
 read_game_option(PlayChoice) :-
     write('Enter your choice (1, 2, or 3): '),

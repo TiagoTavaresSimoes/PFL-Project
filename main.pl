@@ -31,5 +31,3 @@ main :-
     display_intro,
     init_random_state,
     init_game.
-
-
