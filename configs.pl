@@ -145,14 +145,22 @@ game_type:-
 game_loop_human_vs_human :-
     clear_console,
     print_board,
+
+    % Player 1 turn
     write('Player 1\'s turn:\n'),
     prompt_for_hexagon_and_direction(Hexagon1, Direction1),
     ( Direction1 = exit -> true ;
       handle_action(Hexagon1, Direction1),
+      clear_console,
+      print_board,
+
+      % Player 2 turn
       write('Player 2\'s turn:\n'),
       prompt_for_hexagon_and_direction(Hexagon2, Direction2),
       ( Direction2 = exit -> true ;
         handle_action(Hexagon2, Direction2),
+        clear_console,
+        print_board,
         game_loop_human_vs_human )).
 
 game_loop_human_vs_bot :-
