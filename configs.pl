@@ -90,17 +90,17 @@ process_choice(3) :-
     write('Thanks for playing!\n'),
     halt.
 
-game_loop :-
-    clear_console,
-    print_board,
-    ( game_mode(bot_vs_bot) ->
-        bot_move(Hexagon, Direction);
-        format('Bot chose hexagon number ~w and played ~w~n',[Hexagon,Direction]);
-        flush_output ;
-        prompt_for_hexagon_and_direction(Hexagon, Direction) ),
-    ( Direction = exit -> true ;
-      handle_action(Hexagon, Direction),
-      game_loop ).
+%game_loop :-
+%    clear_console,
+%    print_board,
+%    ( game_mode(bot_vs_bot) ->
+%        bot_move(Hexagon, Direction);
+%        format('Bot chose hexagon number ~w and played ~w~n',[Hexagon,Direction]);
+%        flush_output ;
+%        prompt_for_hexagon_and_direction(Hexagon, Direction) ),
+%    ( Direction = exit -> true ;
+%      handle_action(Hexagon, Direction),
+%      game_loop ).
 
 prompt_for_hexagon_and_direction(Hexagon, Direction) :-
     write('Enter the hexagon number (1-7) or type \'exit\' to end: '),
@@ -133,23 +133,57 @@ game_type:-
     read_game_option(PlayChoice),
     process_play_choice(PlayChoice).
 
+game_loop_human_vs_human :-
+    clear_console,
+    print_board,
+    write('Player 1\'s turn:\n'),
+    prompt_for_hexagon_and_direction(Hexagon1, Direction1),
+    ( Direction1 = exit -> true ;
+      handle_action(Hexagon1, Direction1),
+      write('Player 2\'s turn:\n'),
+      prompt_for_hexagon_and_direction(Hexagon2, Direction2),
+      ( Direction2 = exit -> true ;
+        handle_action(Hexagon2, Direction2),
+        game_loop_human_vs_human )).
+
+game_loop_human_vs_bot :-
+    clear_console,
+    print_board,
+    write('Your turn:\n'),
+    prompt_for_hexagon_and_direction(Hexagon, Direction),
+    ( Direction = exit -> true ;
+      handle_action(Hexagon, Direction),
+      write('Bot\'s turn:\n'),
+      bot_move(BotHexagon, BotDirection),
+      handle_action(BotHexagon, BotDirection),
+      game_loop_human_vs_bot ).
+
+
+
+game_loop_bot_vs_bot :-
+    clear_console,
+    print_board,
+    bot_move(Hexagon, Direction),
+    handle_action(Hexagon, Direction),
+    game_loop_bot_vs_bot.
+
 read_game_option(PlayChoice) :-
     write('Enter your choice (1, 2, or 3): '),
     read(PlayChoice),
     validate_choice(PlayChoice).
 
-process_play_choice(_) :-
-    write('Invalid play mode. Please try again.\n'),
-    game_loop.
-
 process_play_choice(1) :-
-    game_loop.
+    game_loop_human_vs_human.
 
 process_play_choice(2) :-
-    game_loop.
+    game_loop_human_vs_bot.
 
 process_play_choice(3) :-
-    game_loop.
+    game_loop_bot_vs_bot.
+
+process_play_choice(_) :-
+    write('Invalid play mode. Please try again.\n'),
+    game_type.
 
 
 gamestate([Board, player1, 0]) :-
