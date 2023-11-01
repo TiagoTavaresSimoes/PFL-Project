@@ -128,13 +128,19 @@ handle_action(Hexagon, Direction) :-
 %    %write('Bot chose hexagon: '), write(Hexagon), nl,
 %    %write('Bot chose direction: '), write(Direction), nl.
 
-bot_move(BotName, Hexagon, Direction) :-
+bot_move(BotName, Hexagon, Direction, NumberOfSpins) :-
     sleep(1),
     % Choose a random hexagon (1-7)
     random(RandomFloat),
     Hexagon is round(1 + RandomFloat * (7 - 1)),
     random_member(Direction, [c, cc]),
-    display_bot_move(BotName, Hexagon, Direction).
+    % Randomly choose how many times to spin the hexagon (ex: 1-5 times for this example)
+    random_in_range(1, 5, NumberOfSpins),
+    display_bot_move(BotName, Hexagon, Direction, NumberOfSpins).
+
+random_in_range(Low, High, Result) :- %calculates a number in float format, and then escales when the function is called (1-5)
+    random(RandomFloat),
+    Result is round(Low + RandomFloat * (High - Low)).
 
 game_type:-  
     write('Please select game mode:\n'),
@@ -211,17 +217,15 @@ game_loop_bot_vs_bot :-
     print_board,
     
     % Bot 1's move
-    bot_move('Bot 1', Hexagon1, Direction1),
-    %display_bot_move('Bot 1', Hexagon1, Direction1),
-    handle_action(Hexagon1, Direction1),
+    bot_move('Bot 1', Hexagon1, Direction1, Spins1),
+    repeat_spin(Hexagon1, Direction1, Spins1),
     sleep(4),
     clear_console,
     print_board,
 
     % Bot 2's move
-    bot_move('Bot 2', Hexagon2, Direction2),
-    %display_bot_move('Bot 2', Hexagon2, Direction2),
-    handle_action(Hexagon2, Direction2),
+    bot_move('Bot 2', Hexagon2, Direction2, Spins2),
+    repeat_spin(Hexagon2, Direction2, Spins2),
     sleep(4),
     clear_console,
     print_board,
@@ -230,9 +234,10 @@ game_loop_bot_vs_bot :-
 
 
 
-display_bot_move(BotName, Hexagon, Direction) :-
+display_bot_move(BotName, Hexagon, Direction, NumberOfSpins) :-
     write(BotName), write(' chose hexagon: '), write(Hexagon), nl,
-    write(BotName), write(' chose direction: '), write(Direction), nl.
+    write(BotName), write(' chose direction: '), write(Direction), nl,
+    write(BotName), write(' will spin the hexagon '), write(NumberOfSpins), write(' times.'), nl.
 
 
 read_game_option(PlayChoice) :-
