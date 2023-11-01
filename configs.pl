@@ -102,13 +102,15 @@ process_choice(3) :-
 %      handle_action(Hexagon, Direction),
 %      game_loop ).
 
-prompt_for_hexagon_and_direction(Hexagon, Direction) :-
+prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) :-
     write('Enter the hexagon number (1-7) or type \'exit\' to end: '),
     read(Input),
-    ( Input = exit -> Direction = exit, Hexagon = _ ;
+    ( Input = exit -> Direction = exit, Hexagon = _, NumberOfSpins = 0 ;
       Hexagon = Input,
       write('Rotate clockwise or counterclockwise? (c/cc): '),
-      read(Direction) ).
+      read(Direction),
+      write('How many times do you want to spin the wheel? '),
+      read(NumberOfSpins) ).
 
 handle_action(_, exit). 
 handle_action(Hexagon, Direction) :-
@@ -146,22 +148,29 @@ game_loop_human_vs_human :-
     clear_console,
     print_board,
 
-    % Player 1 turn
+    % Player 1's turn
     write('Player 1\'s turn:\n'),
-    prompt_for_hexagon_and_direction(Hexagon1, Direction1),
+    prompt_for_hexagon_and_direction(Hexagon1, Direction1, Spins1),
     ( Direction1 = exit -> true ;
-      handle_action(Hexagon1, Direction1),
+      repeat_spin(Hexagon1, Direction1, Spins1),
       clear_console,
       print_board,
 
-      % Player 2 turn
+      % Player 2's turn
       write('Player 2\'s turn:\n'),
-      prompt_for_hexagon_and_direction(Hexagon2, Direction2),
+      prompt_for_hexagon_and_direction(Hexagon2, Direction2, Spins2),
       ( Direction2 = exit -> true ;
-        handle_action(Hexagon2, Direction2),
+        repeat_spin(Hexagon2, Direction2, Spins2),
         clear_console,
         print_board,
         game_loop_human_vs_human )).
+
+repeat_spin(_, _, 0).
+repeat_spin(Hexagon, Direction, Spins) :-
+    Spins > 0,
+    handle_action(Hexagon, Direction),
+    NewSpins is Spins - 1,
+    repeat_spin(Hexagon, Direction, NewSpins).
 
 game_loop_human_vs_bot :-
     clear_console,
