@@ -103,16 +103,49 @@ process_choice(3) :-
 %      game_loop ).
 
 prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) :-
+    repeat,
     write('Enter the hexagon number (1-7) or type \'exit\' to end: '),
     read(Input),
-    ( Input = exit -> Direction = exit, Hexagon = _, NumberOfSpins = 0 ;
-      Hexagon = Input,
-      write('Rotate clockwise or counterclockwise? (c/cc): '),
-      read(Direction),
-      repeat,
-      write('How many times do you want to spin the wheel (1-5)? '),
-      read(TempNumberOfSpins),
-      (between(1, 5, TempNumberOfSpins) -> NumberOfSpins = TempNumberOfSpins; write('Invalid input. Please enter a number between 1 and 5.'), nl, fail) %if the number is invalid, the function repeats itself until a valid number is written
+    ( 
+        Input = exit -> Direction = exit, Hexagon = _, NumberOfSpins = 0, !
+        ;
+        validate_hexagon(Input, Hexagon) 
+    ),
+    prompt_for_direction(Direction),
+    prompt_for_spin_count(NumberOfSpins).
+
+prompt_for_direction(Direction) :-
+    repeat,
+    write('Rotate clockwise or counterclockwise? (c/cc): '),
+    read(TempDirection),
+    (
+        validate_direction(TempDirection, Direction) -> !
+        ;
+        write('Invalid input. Please enter c or cc.'), nl, fail
+    ).
+
+prompt_for_spin_count(NumberOfSpins) :-
+    repeat,
+    write('How many times do you want to spin the wheel (1-5)? '),
+    read(TempNumberOfSpins),
+    ( 
+        between(1, 5, TempNumberOfSpins) -> NumberOfSpins = TempNumberOfSpins, !
+        ; 
+        write('Invalid input. Please enter a number between 1 and 5.'), nl, fail 
+    ).
+
+validate_hexagon(Input, Hexagon) :-
+    (
+        between(1, 7, Input) -> Hexagon = Input, !
+        ;
+        write('Invalid input. Please enter a number between 1 and 7.'), nl, fail
+    ).
+
+validate_direction(TempDirection, Direction) :-
+    (
+        (TempDirection = c ; TempDirection = cc) -> Direction = TempDirection
+        ;
+        fail
     ).
 
 handle_action(_, exit). 
@@ -185,16 +218,23 @@ game_loop_human_vs_bot :-
     clear_console,
     print_board,
     write('Your turn:\n'),
-    prompt_for_hexagon_and_direction(Hexagon, Direction),
-    ( Direction = exit -> true ;
-      handle_action(Hexagon, Direction),
+    
+    % User Turn
+    prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins),
+    ( Direction = exit -> true ; 
+      repeat_spin(Hexagon, Direction, NumberOfSpins),
       clear_console,
+      print_board,
+
+      % Bot Turn
       write('Bot\'s turn:\n'),
-      bot_move(BotHexagon, BotDirection),
-      write('Bot chose hexagon: '), write(BotHexagon), nl,
-      write('Bot chose direction: '), write(BotDirection), nl,
-      sleep(2), % Pause for 2 seconds to let the user see the bot's move
-      handle_action(BotHexagon, BotDirection),
+      bot_move('Bot', BotHexagon, BotDirection, BotNumberOfSpins),
+      %display_bot_move('Bot', BotHexagon, BotDirection, BotNumberOfSpins),
+      sleep(4),
+      repeat_spin(BotHexagon, BotDirection, BotNumberOfSpins),
+      clear_console,
+      print_board,
+      
       game_loop_human_vs_bot ).
 
 
