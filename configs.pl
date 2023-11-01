@@ -109,8 +109,11 @@ prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) :-
       Hexagon = Input,
       write('Rotate clockwise or counterclockwise? (c/cc): '),
       read(Direction),
-      write('How many times do you want to spin the wheel? '),
-      read(NumberOfSpins) ).
+      repeat,
+      write('How many times do you want to spin the wheel (1-5)? '),
+      read(TempNumberOfSpins),
+      (between(1, 5, TempNumberOfSpins) -> NumberOfSpins = TempNumberOfSpins; write('Invalid input. Please enter a number between 1 and 5.'), nl, fail) %if the number is invalid, the function repeats itself until a valid number is written
+    ).
 
 handle_action(_, exit). 
 handle_action(Hexagon, Direction) :-
