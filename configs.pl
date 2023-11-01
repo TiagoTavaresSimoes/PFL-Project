@@ -117,15 +117,22 @@ handle_action(Hexagon, Direction) :-
     synchronize_neighbors(Hexagon).
 
 
-bot_move(Hexagon, Direction) :-
+%bot_move(Hexagon, Direction) :-
+%    sleep(1),
+%    % Choose a random hexagon (1-7)
+%    random(RandomFloat),
+%    Hexagon is round(1 + RandomFloat * (7 - 1)),
+%    random_member(Direction, [c, cc]).
+%    %write('Bot chose hexagon: '), write(Hexagon), nl,
+%    %write('Bot chose direction: '), write(Direction), nl.
+
+bot_move(BotName, Hexagon, Direction) :-
     sleep(1),
     % Choose a random hexagon (1-7)
     random(RandomFloat),
     Hexagon is round(1 + RandomFloat * (7 - 1)),
-    random_member(Direction, [c, cc]).
-    %write('Bot chose hexagon: '), write(Hexagon), nl,
-    %write('Bot chose direction: '), write(Direction), nl.
-
+    random_member(Direction, [c, cc]),
+    display_bot_move(BotName, Hexagon, Direction).
 
 game_type:-  
     write('Please select game mode:\n'),
@@ -166,18 +173,46 @@ game_loop_human_vs_bot :-
 
 
 
+%game_loop_bot_vs_bot :-
+%    clear_console,
+%    print_board,
+    
+    % Bot 1's move
+%    bot_move('Bot 1', Hexagon1, Direction1),
+%    handle_action(Hexagon1, Direction1),
+%    sleep(2), % Pause for 2 seconds after Bot 1's move
+    
+    % Bot 2's move
+%    bot_move('Bot 2', Hexagon2, Direction2),
+%    handle_action(Hexagon2, Direction2),
+%    sleep(2), % Pause for 2 seconds after Bot 2's move
+
+%    game_loop_bot_vs_bot.
+
 game_loop_bot_vs_bot :-
+    % Bot 1's move
+    bot_move('Bot 1', Hexagon1, Direction1),
+    %display_bot_move('Bot 1', Hexagon1, Direction1),
+    handle_action(Hexagon1, Direction1),
+    sleep(4),
     clear_console,
     print_board,
-    bot_move(Hexagon, Direction),
-    display_bot_move(Hexagon, Direction), % Display the bot's move
-    sleep(2),
-    handle_action(Hexagon, Direction),
+
+    % Bot 2's move
+    bot_move('Bot 2', Hexagon2, Direction2),
+    %display_bot_move('Bot 2', Hexagon2, Direction2),
+    handle_action(Hexagon2, Direction2),
+    sleep(4),
+    clear_console,
+    print_board,
+
     game_loop_bot_vs_bot.
 
-display_bot_move(Hexagon, Direction) :-
-    write('Bot chose hexagon: '), write(Hexagon), nl,
-    write('Bot chose direction: '), write(Direction), nl.
+
+
+display_bot_move(BotName, Hexagon, Direction) :-
+    write(BotName), write(' chose hexagon: '), write(Hexagon), nl,
+    write(BotName), write(' chose direction: '), write(Direction), nl.
 
 
 read_game_option(PlayChoice) :-
