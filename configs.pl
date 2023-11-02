@@ -90,62 +90,50 @@ process_choice(3) :-
     write('Thanks for playing!\n'),
     halt.
 
-%game_loop :-
-%    clear_console,
-%    print_board,
-%    ( game_mode(bot_vs_bot) ->
-%        bot_move(Hexagon, Direction);
-%        format('Bot chose hexagon number ~w and played ~w~n',[Hexagon,Direction]);
-%        flush_output ;
-%        prompt_for_hexagon_and_direction(Hexagon, Direction) ),
-%    ( Direction = exit -> true ;
-%      handle_action(Hexagon, Direction),
-%      game_loop ).
+game_loop :-
+    clear_console,
+    print_board,
+    ( game_mode(bot_vs_bot) ->
+        bot_move(Hexagon, Direction, NumberOfSpins),
+        format('Bot chose hexagon number ~w, played ~w, and spun the wheel ~w times~n',[Hexagon,Direction,NumberOfSpins]),
+        flush_output ;
+        prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) ),
+    ( Direction = exit -> true ;
+      handle_action(Hexagon, Direction, NumberOfSpins),
+      game_loop ).
 
 prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) :-
-    repeat,
     write('Enter the hexagon number (1-7) or type \'exit\' to end: '),
     read(Input),
     ( 
-        Input = exit -> Direction = exit, Hexagon = _, NumberOfSpins = 0, !
+        Input = exit -> Direction = exit, Hexagon = _, NumberOfSpins = 0
         ;
-        validate_hexagon(Input, Hexagon) 
-    ),
-    prompt_for_direction(Direction),
-    prompt_for_spin_count(NumberOfSpins).
+        integer(Input), between(1, 7, Input) -> Hexagon = Input,
+        prompt_for_direction(Direction),
+        prompt_for_spin_count(NumberOfSpins)
+        ;
+        write('Invalid input. Please enter a number between 1 and 7 or \'exit\'.'), nl,
+        prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins)
+    ).
 
 prompt_for_direction(Direction) :-
-    repeat,
     write('Rotate clockwise or counterclockwise? (c/cc): '),
     read(TempDirection),
-    (
-        validate_direction(TempDirection, Direction) -> !
+    ( 
+        (TempDirection = c ; TempDirection = cc) -> Direction = TempDirection
         ;
-        write('Invalid input. Please enter c or cc.'), nl, fail
+        write('Invalid input. Please enter c or cc.'), nl,
+        prompt_for_direction(Direction)
     ).
 
 prompt_for_spin_count(NumberOfSpins) :-
-    repeat,
     write('How many times do you want to spin the wheel (1-5)? '),
     read(TempNumberOfSpins),
     ( 
-        between(1, 5, TempNumberOfSpins) -> NumberOfSpins = TempNumberOfSpins, !
-        ; 
-        write('Invalid input. Please enter a number between 1 and 5.'), nl, fail 
-    ).
-
-validate_hexagon(Input, Hexagon) :-
-    (
-        between(1, 7, Input) -> Hexagon = Input, !
+        integer(TempNumberOfSpins), between(1, 5, TempNumberOfSpins) -> NumberOfSpins = TempNumberOfSpins
         ;
-        write('Invalid input. Please enter a number between 1 and 7.'), nl, fail
-    ).
-
-validate_direction(TempDirection, Direction) :-
-    (
-        (TempDirection = c ; TempDirection = cc) -> Direction = TempDirection
-        ;
-        fail
+        write('Invalid input. Please enter a number between 1 and 5.'), nl,
+        prompt_for_spin_count(NumberOfSpins)
     ).
 
 handle_action(_, exit). 
@@ -307,4 +295,8 @@ gamestate([Board, player1, 0]) :-
     clear_console,
     title,
     initial_board(Board), print_board(Board).
+
+invalid_input :-
+    write('Invalid input. Please try again.'), nl.
+
 
