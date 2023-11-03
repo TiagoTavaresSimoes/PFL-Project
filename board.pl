@@ -246,33 +246,23 @@ connection(5, 5, 7, 3).
 connection(6, 2, 7, 6).
 connection(6, 3, 7, 5).
 
+winner_exists(Color) :-
+    hexagon(Start, Marbles),
+    member(Color, Marbles),
+    dfs(Start, Color, [], 1).  
 
-has_six_in_a_row(Type) :-
-    hexagon(Hex, Marbles),
-    nth1(Pos, Marbles, Marble),
-    Marble = Type,
-    dfs(Hex, Pos, Type, 1, [(Hex, Pos)], _),
-    !. % Cut to stop searching after first solution
+dfs(_, _, _, Length) :-
+    Length >= 6.
 
-% Depth First Search 
-dfs(_, _, _, 6, Visited, Visited). % Base case: when 6 marbles are visited
-dfs(Hex, Pos, Type, Depth, VisitedSoFar, Visited) :-
-    % Current marble
-    hexagon(Hex, Marbles),
-    nth1(Pos, Marbles, Marble),
-    Marble = Type,
-    % Find the connections of the current marble
-    findall((NextHex, NextPos),
-            (connection(Hex, Pos, NextHex, NextPos),
-             hexagon(NextHex, NextMarbles),
-             nth1(NextPos, NextMarbles, NextMarble),
-             NextMarble = Type),
-            Neighbors),
-    % Traverse neighbors
-    member((NeighborHex, NeighborPos), Neighbors),
-    \+ member((NeighborHex, NeighborPos), VisitedSoFar),
-    NewDepth is Depth + 1,
-    dfs(NeighborHex, NeighborPos, Type, NewDepth, [(NeighborHex, NeighborPos)|VisitedSoFar], Visited).
+dfs(Hexagon, Color, Visited, Length) :-
+    hexagon(Hexagon, Marbles),
+    member(Color, Marbles),
+    \+ member(Hexagon, Visited),
+    connection(Hexagon, _, NextHex, _),
+    hexagon(NextHex, NextMarbles),
+    member(Color, NextMarbles),  
+    NewLength is Length + 1,    
+    dfs(NextHex, Color, [Hexagon|Visited], NewLength).
 
 
 

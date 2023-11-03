@@ -93,14 +93,18 @@ process_choice(3) :-
 game_loop :-
     clear_console,
     print_board,
-    ( game_mode(bot_vs_bot) ->
-        bot_move(Hexagon, Direction, NumberOfSpins),
-        format('Bot chose hexagon number ~w, played ~w, and spun the wheel ~w times~n',[Hexagon,Direction,NumberOfSpins]),
-        flush_output ;
-        prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) ),
-    ( Direction = exit -> true ;
-      handle_action(Hexagon, Direction, NumberOfSpins),
-      game_loop ).
+    ( winner_exists ->
+        writeln('We have a winner!'),
+        true;
+        ( game_mode(bot_vs_bot) ->
+            bot_move(Hexagon, Direction, NumberOfSpins),
+            format('Bot chose hexagon number ~w, played ~w, and spun the wheel ~w times~n',[Hexagon,Direction,NumberOfSpins]),
+            flush_output ;
+            prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) ),
+        ( Direction = exit -> true ;
+          handle_action(Hexagon, Direction, NumberOfSpins),
+          game_loop )
+    ).
 
 prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) :-
     write('Enter the hexagon number (1-7) or type \'exit\' to end: '),
