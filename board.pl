@@ -41,41 +41,74 @@ rotate_once_clockwise([First|Rest], RotatedMarbles) :-
 
 % Synchronization rules:
 synchronize_neighbors(1) :-
-    hexagon(1, [_,_,H1_3,_,H1_5,_]),
+    hexagon(1, [_,_,H1_3,H1_4,H1_5,_]),
     sync_neighbors(1, 3, H1_3),
+    sync_neighbors(1, 4, H1_4),
     sync_neighbors(1, 5, H1_5).
 
 synchronize_neighbors(2) :-
-    hexagon(2, [_,_,_,_,H2_5,_]),
-    sync_neighbors(2, 5, H2_5).
+    hexagon(2, [_,_,_,H2_4,H2_5,H2_6]),
+    sync_neighbors(2, 4, H2_4),
+    sync_neighbors(2, 5, H2_5),
+    sync_neighbors(2, 6, H2_6).
 
 synchronize_neighbors(3) :-
-    hexagon(3, [_,_,H3_3,_,_,_]),
-    sync_neighbors(3, 3, H3_3).
+    hexagon(3, [_,H3_2,H3_3,H3_4,_,_]),
+    sync_neighbors(3, 2, H3_2),
+    sync_neighbors(3, 3, H3_3),
+    sync_neighbors(3, 4, H3_4).
 
 synchronize_neighbors(4) :-
-    hexagon(4, [_,_,H4_3,_,H4_5,_]),
+    hexagon(4, [H4_1,H4_2,H4_3,H4_4,H4_5,H4_6]),
+    sync_neighbors(4, 1, H4_1),
+    sync_neighbors(4, 2, H4_2),
     sync_neighbors(4, 3, H4_3),
-    sync_neighbors(4, 5, H4_5).
+    sync_neighbors(4, 4, H4_4),
+    sync_neighbors(4, 5, H4_5),
+    sync_neighbors(4, 6, H4_6).
 
 synchronize_neighbors(5) :-
-    hexagon(5, [_,_,_,_,H5_5,_]),
-    sync_neighbors(5, 5, H5_5).
+    hexagon(5, [H5_1,_,_,_,H5_5,H5_6]),
+    sync_neighbors(5, 1, H5_1),
+    sync_neighbors(5, 5, H5_5),
+    sync_neighbors(5, 6, H5_6).
 
 synchronize_neighbors(6) :-
-    hexagon(6, [_,_,H6_3,_,_,_]),
+    hexagon(6, [H6_1,H6_2,H6_3,_,_,_]),
+    sync_neighbors(6, 1, H6_1),
+    sync_neighbors(6, 2, H6_2),
     sync_neighbors(6, 3, H6_3).
 
-synchronize_neighbors(7) :- true.
+synchronize_neighbors(7) :-
+    hexagon(7, [H7_1,H7_2,_,_,_,H7_6]),
+    sync_neighbors(7, 1, H7_1),
+    sync_neighbors(7, 2, H7_2),
+    sync_neighbors(7, 6, H7_6).
 
 sync_neighbors(1, 3, M) :- change_marble(2, 6, M).
+sync_neighbors(1, 4, M) :- change_marble(4, 1, M).
 sync_neighbors(1, 5, M) :- change_marble(3, 2, M).
+sync_neighbors(2, 4, M) :- change_marble(5, 1, M).
 sync_neighbors(2, 5, M) :- change_marble(4, 2, M).
+sync_neighbors(2, 6, M) :- change_marble(1, 3, M).
+sync_neighbors(3, 2, M) :- change_marble(1, 5, M).
 sync_neighbors(3, 3, M) :- change_marble(4, 6, M).
+sync_neighbors(3, 4, M) :- change_marble(6, 1, M).
+sync_neighbors(4, 1, M) :- change_marble(1, 4, M).
+sync_neighbors(4, 2, M) :- change_marble(2, 5, M).
 sync_neighbors(4, 3, M) :- change_marble(5, 6, M).
+sync_neighbors(4, 4, M) :- change_marble(7, 1, M).
 sync_neighbors(4, 5, M) :- change_marble(6, 2, M).
+sync_neighbors(4, 6, M) :- change_marble(3, 3, M).
+sync_neighbors(5, 1, M) :- change_marble(2, 4, M).
 sync_neighbors(5, 5, M) :- change_marble(7, 2, M).
+sync_neighbors(5, 6, M) :- change_marble(4, 3, M).
+sync_neighbors(6, 1, M) :- change_marble(3, 4, M).
+sync_neighbors(6, 2, M) :- change_marble(4, 5, M).
 sync_neighbors(6, 3, M) :- change_marble(7, 6, M).
+sync_neighbors(7, 1, M) :- change_marble(4, 4, M).
+sync_neighbors(7, 2, M) :- change_marble(5, 5, M).
+sync_neighbors(7, 6, M) :- change_marble(6, 3, M).
 
 change_marble(Hexagon, Position, M) :-
     hexagon(Hexagon, Marbles),
@@ -263,6 +296,18 @@ dfs(Hexagon, Color, Visited, Length) :-
     member(Color, NextMarbles),  
     NewLength is Length + 1,    
     dfs(NextHex, Color, [Hexagon|Visited], NewLength).
+
+synchronize_neighbors(N) :-
+    hexagon(N, Marbles),
+    sync_from_list(N, Marbles).
+
+sync_from_list(_, []).
+sync_from_list(N, [M|Ms]) :-
+    length(Ms, Remaining),
+    Position is 7 - Remaining,
+    (sync_neighbors(N, Position, M); true),
+    sync_from_list(N, Ms).
+
 
 
 
