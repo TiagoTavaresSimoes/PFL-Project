@@ -279,23 +279,30 @@ connection(5, 5, 7, 3).
 connection(6, 2, 7, 6).
 connection(6, 3, 7, 5).
 
-winner_exists(Color) :-
-    hexagon(Start, Marbles),
-    member(Color, Marbles),
-    dfs(Start, Color, [], 1).  
+winner_exists :-
+    hexagon(H, Marbles),
+    nth1(Pos, Marbles, M),
+    (M = 'G'; M = 'B'),
+    dfs(H, Pos, M, [H/Pos], 1, Path),
+    writeln('Winning path:'),
+    print_path(Path),
+    !.
 
-dfs(_, _, _, Length) :-
-    Length >= 6.
+print_path([]) :- nl.
+print_path([H/Pos|Rest]) :-
+    format("Hexagon: ~w, Position: ~w~n", [H, Pos]),
+    print_path(Rest).
 
-dfs(Hexagon, Color, Visited, Length) :-
-    hexagon(Hexagon, Marbles),
-    member(Color, Marbles),
-    \+ member(Hexagon, Visited),
-    connection(Hexagon, _, NextHex, _),
-    hexagon(NextHex, NextMarbles),
-    member(Color, NextMarbles),  
-    NewLength is Length + 1,    
-    dfs(NextHex, Color, [Hexagon|Visited], NewLength).
+dfs(_, _, _, Path, 6, Path) :- reverse(Path, RPath), writeln('Path found:'), print_path(RPath), !. % Found 6 in a row and print path
+
+dfs(H, Pos, M, Visited, Count, Path) :-
+    connection(H, Pos, NextH, NextPos),
+    \+ member(NextH/NextPos, Visited),  % Not visited yet
+    hexagon(NextH, NextMarbles),
+    nth1(NextPos, NextMarbles, NextM),
+    NextM = M, % The next marble is the same as the current
+    NewCount is Count + 1,
+    dfs(NextH, NextPos, M, [NextH/NextPos|Visited], NewCount, Path).
 
 synchronize_neighbors(N) :-
     hexagon(N, Marbles),
