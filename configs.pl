@@ -166,6 +166,61 @@ bot_move(BotName, Hexagon, Direction, NumberOfSpins) :-
     random_in_range(1, 5, NumberOfSpins),
     display_bot_move(BotName, Hexagon, Direction, NumberOfSpins).
 
+max_depth(Depth) :- Depth is 3.
+
+
+% Define the greedy bot move function
+greedy_bot_move(Board, BestHexagon, BestDirection, BestNumberOfSpins) :-
+    max_depth(Depth),
+    minimax(Board, Depth, BestHexagon, BestDirection, BestNumberOfSpins, _Score).
+
+% The minimax algorithm with depth, returns the best move and its score.
+minimax(Board, Depth, Hexagon, Direction, NumberOfSpins, Score) :-
+    ( Depth =< 0 ->
+        evaluate_board(Board, Score) % If we have reached the maximum depth, evaluate the board
+    ; otherwise ->
+        findall(
+            [H, D, NS, S],
+            ( possible_move(H, D, NS), % For all possible moves
+              apply_move(Board, H, D, NS, NewBoard), % Apply the move
+              minimax(NewBoard, Depth - 1, _, _, _, S) % Recurse for the next depth
+            ),
+            MovesScores
+        ),
+        % Decide whether to maximize or minimize based on whose turn it is
+        % For instance, if it's the bot's turn, we want to maximize the score.
+        ( is_maximizing_player(Board) ->
+            max_member([Hexagon, Direction, NumberOfSpins, Score], MovesScores)
+        ; otherwise ->
+            min_member([Hexagon, Direction, NumberOfSpins, Score], MovesScores)
+        )
+    ).
+
+% A utility predicate to check if it's the maximizing player's turn, assuming we're evaluating from the bot's perspective.
+is_maximizing_player(Board) :-
+    % Implement the logic to determine if it's the maximizing player's (bot's) turn.
+    % For simplicity, this example assumes it's always the bot's turn when minimax is called.
+    true.
+
+% Apply a move to the board.
+apply_move(Board, Hexagon, Direction, NumberOfSpins, NewBoard) :-
+    % You need to implement the logic to mutate the board state here.
+    true.
+
+
+
+
+% A simple evaluation function that counts the bot's contiguous marbles
+evaluate_board(Board, Score) :-
+    % You need to implement your evaluation logic based on the board state here.
+    true.
+
+% This would be where you actually define what a possible move is
+possible_move(Hexagon, Direction, NumberOfSpins) :-
+    between(1, 7, Hexagon),
+    member(Direction, [c, cc]),
+    between(1, 5, NumberOfSpins).
+
 random_in_range(Low, High, Result) :- %calculates a number in float format, and then escales when the function is called (1-5)
     random(RandomFloat),
     Result is round(Low + RandomFloat * (High - Low)).
@@ -176,7 +231,85 @@ game_type:-
     write('2 - Human vs. Bot\n'),
     write('3 - Bot vs. Bot\n'),
     read_game_option(PlayChoice),
-    process_play_choice(PlayChoice).
+    (   PlayChoice = 2 -> select_bot_difficulty;
+        PlayChoice = 3 -> select_bot_vs_bot_difficulty;
+        process_play_choice(PlayChoice)
+    ).
+
+select_bot_difficulty :-
+    write('Select Bot Difficulty:\n'),
+    write('1 - Random Bot\n'),
+    write('2 - Greedy Bot\n'),
+    read_bot_difficulty(BotDifficulty),
+    process_bot_difficulty_choice(BotDifficulty).
+
+read_bot_difficulty(BotDifficulty) :-
+    write('Enter your choice (1 or 2): '),
+    read(BotDifficulty),
+    validate_bot_difficulty(BotDifficulty).
+
+validate_bot_difficulty(BotDifficulty) :-
+    (BotDifficulty = 1 ; BotDifficulty = 2),
+    !.
+
+validate_bot_difficulty(_) :-
+    write('Invalid difficulty. Please try again.\n'),
+    select_bot_difficulty.
+
+process_bot_difficulty_choice(1) :-
+    set_bot_type(random),
+    game_loop_human_vs_bot.
+
+process_bot_difficulty_choice(2) :-
+    set_bot_type(greedy),
+    game_loop_human_vs_bot.
+
+select_bot_vs_bot_difficulty :-
+    write('Select Difficulty for Both Bots:\n'),
+    write('1 - Random vs Random\n'),
+    write('2 - Greedy vs Greedy\n'),
+    write('3 - Random vs Greedy\n'),
+    read_bot_vs_bot_difficulty(BotVsBotDifficulty),
+    process_bot_vs_bot_difficulty_choice(BotVsBotDifficulty).
+
+read_bot_vs_bot_difficulty(BotVsBotDifficulty) :-
+    write('Enter your choice (1, 2, or 3): '),
+    read(BotVsBotDifficulty),
+    validate_bot_vs_bot_difficulty(BotVsBotDifficulty).
+
+validate_bot_vs_bot_difficulty(BotVsBotDifficulty) :-
+    (BotVsBotDifficulty = 1 ; BotVsBotDifficulty = 2 ; BotVsBotDifficulty = 3),
+    !.
+
+validate_bot_vs_bot_difficulty(_) :-
+    write('Invalid difficulty. Please try again.\n'),
+    select_bot_vs_bot_difficulty.
+
+% Process the chosen bot vs bot difficulty
+process_bot_vs_bot_difficulty_choice(1) :-
+    set_bot_type(random, random),
+    game_loop_bot_vs_bot.
+
+process_bot_vs_bot_difficulty_choice(2) :-
+    set_bot_type(greedy, greedy),
+    game_loop_bot_vs_bot.
+
+process_bot_vs_bot_difficulty_choice(3) :-
+    set_bot_type(random, greedy),
+    game_loop_bot_vs_bot.
+
+% Set the bot type for a single bot
+set_bot_type(Type) :-
+    retractall(bot_type(_)),
+    assert(bot_type(Type)).
+
+% Set the bot type for bot vs bot
+set_bot_type(Type1, Type2) :-
+    retractall(bot_type(_,_)),
+    assert(bot_type(bot1, Type1)),
+    assert(bot_type(bot2, Type2)).
+
+    
 
 game_loop_human_vs_human :-
     clear_console,
@@ -231,21 +364,6 @@ game_loop_human_vs_bot :-
 
 
 
-%game_loop_bot_vs_bot :-
-%    clear_console,
-%    print_board,
-    
-    % Bot 1's move
-%    bot_move('Bot 1', Hexagon1, Direction1),
-%    handle_action(Hexagon1, Direction1),
-%    sleep(2), % Pause for 2 seconds after Bot 1's move
-    
-    % Bot 2's move
-%    bot_move('Bot 2', Hexagon2, Direction2),
-%    handle_action(Hexagon2, Direction2),
-%    sleep(2), % Pause for 2 seconds after Bot 2's move
-
-%    game_loop_bot_vs_bot.
 
 game_loop_bot_vs_bot :-
     clear_console,
