@@ -6,16 +6,19 @@
 :- consult('board.pl').
 :- consult('menu.pl').
 
-
+% other_player(+Player, -OtherPlayer)
+% Determines the opposite player based on the current player.
 other_player(player1, player2).
 other_player(player2, player1).
 
+% flugelrad/0
 flugelrad:-
     write('--------------------------------------\n'),
     write('      Welcome to Flugelrad!           \n'),
     write('--------------------------------------\n\n').
 
-
+% game_loop/0
+% Handles the main game loop, processing turns until the game is exited or a winner is declared.
 game_loop :-
     clear_console,
     print_board,
@@ -37,6 +40,9 @@ game_loop :-
             )
     ).
 
+
+% prompt_for_hexagon_and_direction(-Hexagon, -Direction, -NumberOfSpins)
+% Prompts the user for a hexagon number, direction of rotation, and number of spins.
 prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) :-
     write('Enter the hexagon number (1-7) or type \'exit\' to end: '),
     read(Input),
@@ -51,6 +57,9 @@ prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) :-
         prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins)
     ).
 
+
+% prompt_for_direction(-Direction)
+% Prompts the user for the direction of rotation.
 prompt_for_direction(Direction) :-
     write('Rotate clockwise or counterclockwise? (c/cc): '),
     read(TempDirection),
@@ -61,6 +70,9 @@ prompt_for_direction(Direction) :-
         prompt_for_direction(Direction)
     ).
 
+
+% prompt_for_spin_count(-NumberOfSpins)
+% Prompts the user for how many times they want to spin the wheel.
 prompt_for_spin_count(NumberOfSpins) :-
     write('How many times do you want to spin the wheel (1-5)? '),
     read(TempNumberOfSpins),
@@ -71,6 +83,8 @@ prompt_for_spin_count(NumberOfSpins) :-
         prompt_for_spin_count(NumberOfSpins)
     ).
 
+% handle_action(+Hexagon, +Direction)
+% Executes the action for the given hexagon and direction.
 handle_action(_, exit). 
 handle_action(Hexagon, Direction) :-
     (Direction = c -> rotate_hexagon_clockwise(Hexagon) ;
@@ -78,7 +92,8 @@ handle_action(Hexagon, Direction) :-
     synchronize_neighbors(Hexagon).
 
 
-
+% bot_move(+BotName, -Hexagon, -Direction, -NumberOfSpins)
+% Determines a bot move with a randomly chosen hexagon, direction, and number of spins.
 bot_move(BotName, Hexagon, Direction, NumberOfSpins) :-
     sleep(1),
     % Choose a random hexagon (1-7)
@@ -89,15 +104,21 @@ bot_move(BotName, Hexagon, Direction, NumberOfSpins) :-
     random_in_range(1, 5, NumberOfSpins),
     display_bot_move(BotName, Hexagon, Direction, NumberOfSpins).
 
+
+% max_depth(-Depth)
+% Defines the maximum depth for the minimax algorithm.
 max_depth(Depth) :- Depth is 3.
 
 
-% Define the greedy bot move function
+% greedy_bot_move(+Board, -BestHexagon, -BestDirection, -BestNumberOfSpins)
+% Chooses a move based on a greedy algorithm (minimax) evaluating the best score.
 greedy_bot_move(Board, BestHexagon, BestDirection, BestNumberOfSpins) :-
     max_depth(Depth),
     minimax(Board, Depth, BestHexagon, BestDirection, BestNumberOfSpins, _Score).
 
-% The minimax algorithm with depth, returns the best move and its score.
+
+% minimax(+Board, +Depth, -Hexagon, -Direction, -NumberOfSpins, -Score)
+% The minimax algorithm that evaluates the best move and its score up to a given depth.
 minimax(Board, Depth, Hexagon, Direction, NumberOfSpins, Score) :-
     ( Depth =< 0 ->
         evaluate_board(Board, Score) % If we have reached the maximum depth, evaluate the board
@@ -119,42 +140,54 @@ minimax(Board, Depth, Hexagon, Direction, NumberOfSpins, Score) :-
         )
     ).
 
-% A utility predicate to check if it's the maximizing player's turn, assuming we're evaluating from the bot's perspective.
+
+% is_maximizing_player(+Board)
+% Determines if the current player is the maximizing player.
 is_maximizing_player(Board) :-
     % Implement the logic to determine if it's the maximizing player's (bot's) turn.
     % For simplicity, this example assumes it's always the bot's turn when minimax is called.
     true.
 
-% Apply a move to the board.
+
+% apply_move(+Board, +Hexagon, +Direction, +NumberOfSpins, -NewBoard)
+% Applies a move to the board and returns the new board state.
 apply_move(Board, Hexagon, Direction, NumberOfSpins, NewBoard) :-
     % You need to implement the logic to mutate the board state here.
     true.
 
-% A simple evaluation function that counts the bot's contiguous marbles
+
+% evaluate_board(+Board, -Score)
+% Evaluates the board and assigns a score based on the current state.
 evaluate_board(Board, Score) :-
     % You need to implement your evaluation logic based on the board state here.
     true.
 
-% This would be where you actually define what a possible move is
+
+% possible_move(-Hexagon, -Direction, -NumberOfSpins)
+% Generates all possible moves given the current board state.
 possible_move(Hexagon, Direction, NumberOfSpins) :-
     between(1, 7, Hexagon),
     member(Direction, [c, cc]),
     between(1, 5, NumberOfSpins).
 
+% random_in_range(+Low, +High, -Result)
+% Generates a random number within the specified range.
 random_in_range(Low, High, Result) :- %calculates a number in float format, and then escales when the function is called (1-5)
     random(RandomFloat),
     Result is round(Low + RandomFloat * (High - Low)).
 
 
 
-% Set the bot type for bot vs bot
+% set_bot_type(+Type1, +Type2)
+% Sets the type for each bot in a bot vs bot game.
 set_bot_type(Type1, Type2) :-
     retractall(bot_type(_,_)),
     assert(bot_type(bot1, Type1)),
     assert(bot_type(bot2, Type2)).
 
     
-
+% game_loop_human_vs_human/0
+% Handles the game loop for a human vs human match.
 game_loop_human_vs_human :-
     clear_console,
     print_board,
@@ -176,6 +209,8 @@ game_loop_human_vs_human :-
         print_board,
         game_loop_human_vs_human )).
 
+% repeat_spin(+Hexagon, +Direction, +Spins)
+% Repeats a spin action for a given number of times.
 repeat_spin(_, _, 0).
 repeat_spin(Hexagon, Direction, Spins) :-
     Spins > 0,
@@ -183,6 +218,9 @@ repeat_spin(Hexagon, Direction, Spins) :-
     NewSpins is Spins - 1,
     repeat_spin(Hexagon, Direction, NewSpins).
 
+
+% game_loop_human_vs_bot/0
+% Handles the game loop for a human vs bot match.
 game_loop_human_vs_bot :-
     clear_console,
     print_board,
@@ -208,7 +246,8 @@ game_loop_human_vs_bot :-
 
 
 
-
+% game_loop_bot_vs_bot/0
+% Handles the game loop for a bot vs bot match.
 game_loop_bot_vs_bot :-
     clear_console,
     print_board,
@@ -230,18 +269,22 @@ game_loop_bot_vs_bot :-
     game_loop_bot_vs_bot.
 
 
-
+% display_bot_move(+BotName, +Hexagon, +Direction, +NumberOfSpins)
+% Displays the move chosen by a bot.
 display_bot_move(BotName, Hexagon, Direction, NumberOfSpins) :-
     write(BotName), write(' chose hexagon: '), write(Hexagon), nl,
     write(BotName), write(' chose direction: '), write(Direction), nl,
     write(BotName), write(' will spin the hexagon '), write(NumberOfSpins), write(' times.'), nl.
 
-
+% read_game_option(-PlayChoice)
+% Reads the player's game mode choice.
 read_game_option(PlayChoice) :-
     write('Enter your choice (1, 2, or 3): '),
     read(PlayChoice),
     validate_choice(PlayChoice).
 
+% process_play_choice(+Choice)
+% Processes the player's game mode choice and starts the corresponding game loop.
 process_play_choice(1) :-
     game_loop_human_vs_human.
 
@@ -256,6 +299,8 @@ process_play_choice(_) :-
     game_type.
 
 
+% gamestate(-GameState)
+% Initializes the game state with the main menu, clears the board and starts a new game.
 gamestate([Board, player1, 0]) :-
     main_menu,
     clear_console,
