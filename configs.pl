@@ -93,17 +93,22 @@ process_choice(3) :-
 game_loop :-
     clear_console,
     print_board,
-    ( winner_exists ->
-        writeln('We have a winner!'),
-        true;
-        ( game_mode(bot_vs_bot) ->
+    (   game_mode(bot_vs_bot) ->
             bot_move(Hexagon, Direction, NumberOfSpins),
-            format('Bot chose hexagon number ~w, played ~w, and spun the wheel ~w times~n',[Hexagon,Direction,NumberOfSpins]),
-            flush_output ;
-            prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) ),
-        ( Direction = exit -> true ;
-          handle_action(Hexagon, Direction, NumberOfSpins),
-          game_loop )
+            format('Bot chose hexagon number ~w, played ~w, and spun the wheel ~w times~n', [Hexagon,Direction,NumberOfSpins]),
+            flush_output
+        ;   prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins)
+    ),
+    (   Direction = exit ->
+            writeln('Game has been exited.'),
+            true  % Terminate the loop if the player chose to exit.
+        ;   handle_action(Hexagon, Direction, NumberOfSpins), % Apply the chosen move.
+            (   winner_exists -> % After the move is handled, check for a winner.
+                    writeln('We have a winner!'),
+                    print_board, % Show the final state of the board.
+                    display_winner_message % Display a message with the winner details.
+                ;   game_loop % If there is no winner, continue the loop.
+            )
     ).
 
 prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins) :-
@@ -147,14 +152,6 @@ handle_action(Hexagon, Direction) :-
     synchronize_neighbors(Hexagon).
 
 
-%bot_move(Hexagon, Direction) :-
-%    sleep(1),
-%    % Choose a random hexagon (1-7)
-%    random(RandomFloat),
-%    Hexagon is round(1 + RandomFloat * (7 - 1)),
-%    random_member(Direction, [c, cc]).
-%    %write('Bot chose hexagon: '), write(Hexagon), nl,
-%    %write('Bot chose direction: '), write(Direction), nl.
 
 bot_move(BotName, Hexagon, Direction, NumberOfSpins) :-
     sleep(1),
@@ -206,9 +203,6 @@ is_maximizing_player(Board) :-
 apply_move(Board, Hexagon, Direction, NumberOfSpins, NewBoard) :-
     % You need to implement the logic to mutate the board state here.
     true.
-
-
-
 
 % A simple evaluation function that counts the bot's contiguous marbles
 evaluate_board(Board, Score) :-
