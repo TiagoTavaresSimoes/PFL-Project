@@ -1,7 +1,7 @@
 :- dynamic hexagon/2.
 
-hexagon(1, ['B', 'B', 'B', 'B', 'X', 'B']).
-hexagon(2, ['G', 'B', 'G', 'X', 'X', 'B']).
+hexagon(1, ['G', 'B', 'X', 'X', 'X', 'B']).
+hexagon(2, ['G', 'B', 'G', 'X', 'X', 'X']).
 hexagon(3, ['G', 'X', 'X', 'X', 'G', 'B']).
 hexagon(4, ['X', 'X', 'X', 'X', 'X', 'X']).
 hexagon(5, ['X', 'B', 'G', 'B', 'X', 'X']).
@@ -157,155 +157,38 @@ print_board :-
 
 % Hexagon 1
 connection(1, 1, 1, 2).
+connection(1, 2, 1, 1).
 connection(1, 2, 1, 3).
+connection(1, 3, 1, 2).
 connection(1, 3, 1, 4).
+connection(1, 4, 1, 3).
 connection(1, 4, 1, 5).
+connection(1, 5, 1, 4).
 connection(1, 5, 1, 6).
-connection(1, 6, 1, 1).
+connection(1, 6, 1, 5).
 
 % Hexagon 2
 connection(2, 1, 2, 2).
+connection(2, 2, 2, 1).
 connection(2, 2, 2, 3).
+connection(2, 3, 2, 2).
 connection(2, 3, 2, 4).
+connection(2, 4, 2, 3).
 connection(2, 4, 2, 5).
+connection(2, 5, 2, 4).
 connection(2, 5, 2, 6).
-connection(2, 6, 2, 1).
+connection(2, 6, 2, 5).
 
-% Hexagon 3
-connection(3, 1, 3, 2).
-connection(3, 2, 3, 3).
-connection(3, 3, 3, 4).
-connection(3, 4, 3, 5).
-connection(3, 5, 3, 6).
-connection(3, 6, 3, 1).
-
-% Hexagon 4
-connection(4, 1, 4, 2).
-connection(4, 2, 4, 3).
-connection(4, 3, 4, 4).
-connection(4, 4, 4, 5).
-connection(4, 5, 4, 6).
-connection(4, 6, 4, 1).
-
-% Hexagon 5
-connection(5, 1, 5, 2).
-connection(5, 2, 5, 3).
-connection(5, 3, 5, 4).
-connection(5, 4, 5, 5).
-connection(5, 5, 5, 6).
-connection(5, 6, 5, 1).
-
-% Hexagon 6
-connection(6, 1, 6, 2).
-connection(6, 2, 6, 3).
-connection(6, 3, 6, 4).
-connection(6, 4, 6, 5).
-connection(6, 5, 6, 6).
-connection(6, 6, 6, 1).
-
-% Hexagon 7
-connection(7, 1, 7, 2).
-connection(7, 2, 7, 3).
-connection(7, 3, 7, 4).
-connection(7, 4, 7, 5).
-connection(7, 5, 7, 6).
-connection(7, 6, 7, 1).
 
 % Inter-hexagon connections
 % formato: connection(Hexagon, Marble, AdjacentHexagon, AdjacentMarble)
 
 % Between hexagon 1 and 2
+connection(1, 3, 2, 1).
+connection(2, 1, 1, 3).
 connection(1, 3, 2, 5).
-connection(1, 2, 2, 6).
-connection(1, 4, 2, 6).
-connection(1, 4, 2, 5).
+connection(2, 5, 1, 3)
 
-% Between hexagon 1 and 3
-connection(1, 6, 3, 2).
-connection(1, 5, 3, 3).
-connection(1, 5, 3, 1).
-connection(1, 4, 3, 3).
-connection(1, 4, 3, 2).
-
-% Between hexagon 1 and 4
-connection(1, 4, 4, 2).
-connection(1, 4, 4, 6).
-connection(1, 3, 4, 1).
-connection(1, 5, 4, 1).
-
-% Between hexagon 2 and 5
-connection(2, 4, 5, 2).
-connection(2, 4, 5, 6).
-connection(2, 5, 5, 6).
-connection(2, 3, 5, 1).
-
-% Between hexagon 2 and 4
-connection(2, 6, 4, 2).
-connection(2, 5, 4, 1).
-connection(2, 4, 4, 3).
-
-% Between hexagon 3 and 4
-connection(3, 2, 4, 6).
-connection(3, 3, 4, 1).
-connection(3, 3, 4, 5).
-
-% Between hexagon 3 and 6
-connection(3, 4, 6, 6).
-connection(3, 4, 6, 2).
-connection(3, 3, 6, 2).
-connection(3, 3, 6, 1).
-
-% Between hexagon 4 and 5
-connection(4, 3, 5, 1).
-connection(4, 3, 5, 5).
-connection(4, 4, 5, 5).
-connection(4, 2, 5, 6).
-
-% Between hexagon 4 and 6
-connection(4, 5, 6, 1).
-connection(4, 5, 6, 3).
-connection(4, 6, 6, 2).
-
-% Between hexagon 4 and 7
-connection(4, 3, 7, 2).
-connection(4, 3, 7, 1).
-connection(4, 4, 7, 6).
-connection(4, 5, 7, 6).
-
-% Between hexagon 5 and 7
-connection(5, 4, 7, 2).
-connection(5, 5, 7, 3).
-
-% Between hexagon 6 and 7
-connection(6, 2, 7, 6).
-connection(6, 3, 7, 5).
-
-winner_exists :-
-    hexagon(H, Marbles),
-    nth1(Pos, Marbles, M),
-    (M = 'G'; M = 'B'),
-    dfs(H, Pos, M, [H/Pos], 1, Path),
-    !,
-    print_path(Path).
-winner_exists :-
-    write('Path not found'), nl,
-    fail.
-
-print_path([]) :- nl.
-print_path([H/Pos|Rest]) :-
-    format("Hexagon: ~w, Position: ~w~n", [H, Pos]),
-    print_path(Rest).
-
-dfs(_, _, _, Path, 6, Path) :- reverse(Path, RPath), write('Path found:'), print_path(RPath), !. % Found 6 in a row and print path
-
-dfs(H, Pos, M, Visited, Count, Path) :-
-    connection(H, Pos, NextH, NextPos),
-    \+ member(NextH/NextPos, Visited),  % Not visited yet
-    hexagon(NextH, NextMarbles),
-    nth1(NextPos, NextMarbles, NextM),
-    NextM = M, % The next marble is the same as the current
-    NewCount is Count + 1,
-    dfs(NextH, NextPos, M, [NextH/NextPos|Visited], NewCount, Path).
 
 synchronize_neighbors(N) :-
     hexagon(N, Marbles),
@@ -317,6 +200,27 @@ sync_from_list(N, [M|Ms]) :-
     Position is 7 - Remaining,
     (sync_neighbors(N, Position, M); true),
     sync_from_list(N, Ms).
+
+winner_exists :-
+    hexagon(Hexagon, Marbles),
+    nth1(Position, Marbles, Marble),
+    Marble \= 'X',  % Exclude empty marbles
+    dfs(Hexagon, Position, Marble, 1, [], _WinningPath),
+    !.  % Cut to stop searching further when a winning sequence is found
+
+dfs(_, _, _, 6, Visited, Visited).
+
+dfs(Hexagon, Position, Marble, Depth, Visited, NewVisited) :-
+    Depth < 6,
+    connection(Hexagon, Position, NextHexagon, NextPosition),
+    \+ member((NextHexagon, NextPosition), Visited),
+    hexagon(NextHexagon, NextMarbles),
+    nth1(NextPosition, NextMarbles, NextMarble),
+    NextMarble = Marble,  % Ensure the marble type is the same
+    NextDepth is Depth + 1,
+    dfs(NextHexagon, NextPosition, Marble, NextDepth, [(Hexagon, Position)|Visited], NewVisited).
+
+
 
 
 
