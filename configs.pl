@@ -188,7 +188,7 @@ set_bot_type(Type1, Type2) :-
     
 % game_loop_human_vs_human/0
 % Handles the game loop for a human vs human match.
-game_loop_human_vs_human :-
+game_loop_human_vs_human(Player1Color, Player2Color) :-
     clear_console,
     print_board,
 
@@ -207,7 +207,7 @@ game_loop_human_vs_human :-
         repeat_spin(Hexagon2, Direction2, Spins2),
         clear_console,
         print_board,
-        game_loop_human_vs_human )).
+        game_loop_human_vs_human(Player1Color, Player2Color) )).
 
 % repeat_spin(+Hexagon, +Direction, +Spins)
 % Repeats a spin action for a given number of times.

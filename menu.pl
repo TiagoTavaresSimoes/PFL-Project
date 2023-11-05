@@ -112,6 +112,40 @@ game_type:-
         process_play_choice(PlayChoice)
     ).
 
+
+% ask_player_color(+PlayerNumber, -Color)
+% Asks the given player for their choice of color and returns the selected color.
+ask_player_color(PlayerNumber, Color) :-
+    format('Player ~w, please select your marble color (B for Blue/G for Green): ', [PlayerNumber]),
+    read(TempColor),
+    validate_player_color(PlayerNumber, TempColor, Color).
+
+
+% validate_player_color(+Input, -Color)
+% Validates the color chosen by the player.
+validate_player_color(_, Color, Color) :-
+    Color = b; Color = g,
+    !.
+validate_player_color(PlayerNumber, _, Color) :-
+    write('Invalid color. Please enter B for Blue or G for Green.\n'),
+    ask_player_color(PlayerNumber, Color).
+
+% This is part of your existing code where you need to integrate the color selection
+process_play_choice(1) :-
+    ask_player_color(1, Player1Color),
+    ask_player_color(2, Player2Color),
+    write('Player 1 has chosen '), write_color(Player1Color), nl,
+    write('Player 2 has chosen '), write_color(Player2Color), nl,
+    sleep(2),
+    % Initialize the game loop with the chosen colors
+    game_loop_human_vs_human(Player1Color, Player2Color).
+
+% write_color(+Color)
+% Writes the full name of the color based on the player's choice.
+write_color(b) :- write('Blue').
+write_color(g) :- write('Green').
+
+
 % select_bot_difficulty/0
 % Presents options to select the difficulty level of the bot for Human vs. Bot mode.
 select_bot_difficulty :-
