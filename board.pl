@@ -201,7 +201,7 @@ sync_from_list(N, [M|Ms]) :-
     (sync_neighbors(N, Position, M); true),
     sync_from_list(N, Ms).
 
-winner_exists :-
+game_over :-
     hexagon(Hexagon, Marbles),
     nth1(Position, Marbles, Marble),
     Marble \= 'X',  % Exclude empty marbles

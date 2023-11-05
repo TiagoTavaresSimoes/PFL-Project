@@ -32,7 +32,7 @@ game_loop :-
             writeln('Game has been exited.'),
             true  % Terminate the loop if the player chose to exit.
         ;   handle_action(Hexagon, Direction, NumberOfSpins), % Apply the chosen move.
-            (   winner_exists -> % After the move is handled, check for a winner.
+            (   game_over -> % After the move is handled, check for a winner.
                     writeln('We have a winner!'),
                     print_board, % Show the final state of the board.
                     display_winner_message % Display a message with the winner details.
@@ -125,8 +125,8 @@ minimax(Board, Depth, Hexagon, Direction, NumberOfSpins, Score) :-
     ; otherwise ->
         findall(
             [H, D, NS, S],
-            ( possible_move(H, D, NS), % For all possible moves
-              apply_move(Board, H, D, NS, NewBoard), % Apply the move
+            ( valid_moves(H, D, NS), % For all possible moves
+              move(Board, H, D, NS, NewBoard), % Apply the move
               minimax(NewBoard, Depth - 1, _, _, _, S) % Recurse for the next depth
             ),
             MovesScores
@@ -149,9 +149,9 @@ is_maximizing_player(Board) :-
     true.
 
 
-% apply_move(+Board, +Hexagon, +Direction, +NumberOfSpins, -NewBoard)
+% move(+Board, +Hexagon, +Direction, +NumberOfSpins, -NewBoard)
 % Applies a move to the board and returns the new board state.
-apply_move(Board, Hexagon, Direction, NumberOfSpins, NewBoard) :-
+move(Board, Hexagon, Direction, NumberOfSpins, NewBoard) :-
     % You need to implement the logic to mutate the board state here.
     true.
 
@@ -163,9 +163,9 @@ evaluate_board(Board, Score) :-
     true.
 
 
-% possible_move(-Hexagon, -Direction, -NumberOfSpins)
+% valid_moves(-Hexagon, -Direction, -NumberOfSpins)
 % Generates all possible moves given the current board state.
-possible_move(Hexagon, Direction, NumberOfSpins) :-
+valid_moves(Hexagon, Direction, NumberOfSpins) :-
     between(1, 7, Hexagon),
     member(Direction, [c, cc]),
     between(1, 5, NumberOfSpins).
