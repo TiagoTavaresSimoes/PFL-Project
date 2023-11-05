@@ -2,7 +2,7 @@
 :- consult(configs).
 :- consult(data).
 :- consult(utils).
-
+:- consult(menu).
 
 % play/0
 % Starts the game and clears data when it ends 
