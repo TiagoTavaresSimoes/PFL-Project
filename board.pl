@@ -1,12 +1,13 @@
 :- dynamic hexagon/2.
 
-hexagon(1, ['G', 'B', 'X', 'X', 'X', 'B']).
-hexagon(2, ['G', 'B', 'G', 'X', 'X', 'X']).
+hexagon(1, ['B', 'B', 'B', 'B', 'X', 'B']).
+hexagon(2, ['G', 'B', 'G', 'X', 'X', 'B']).
 hexagon(3, ['G', 'X', 'X', 'X', 'G', 'B']).
 hexagon(4, ['X', 'X', 'X', 'X', 'X', 'X']).
 hexagon(5, ['X', 'B', 'G', 'B', 'X', 'X']).
 hexagon(6, ['X', 'X', 'X', 'B', 'G', 'B']).
 hexagon(7, ['X', 'X', 'G', 'B', 'G', 'X']).
+
 
 display_hexagons :-
     display_hexagon(1).
@@ -284,16 +285,18 @@ winner_exists :-
     nth1(Pos, Marbles, M),
     (M = 'G'; M = 'B'),
     dfs(H, Pos, M, [H/Pos], 1, Path),
-    writeln('Winning path:'),
-    print_path(Path),
-    !.
+    !,
+    print_path(Path).
+winner_exists :-
+    write('Path not found'), nl,
+    fail.
 
 print_path([]) :- nl.
 print_path([H/Pos|Rest]) :-
     format("Hexagon: ~w, Position: ~w~n", [H, Pos]),
     print_path(Rest).
 
-dfs(_, _, _, Path, 6, Path) :- reverse(Path, RPath), writeln('Path found:'), print_path(RPath), !. % Found 6 in a row and print path
+dfs(_, _, _, Path, 6, Path) :- reverse(Path, RPath), write('Path found:'), print_path(RPath), !. % Found 6 in a row and print path
 
 dfs(H, Pos, M, Visited, Count, Path) :-
     connection(H, Pos, NextH, NextPos),
