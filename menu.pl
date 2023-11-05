@@ -115,25 +115,26 @@ game_type:-
 
 % ask_player_color(+PlayerNumber, -Color)
 % Asks the given player for their choice of color and returns the selected color.
-ask_player_color(PlayerNumber, Color) :-
+ask_player_color(PlayerNumber, AlreadyChosenColors, Color) :-
     format('Player ~w, please select your marble color (B for Blue/G for Green): ', [PlayerNumber]),
     read(TempColor),
-    validate_player_color(PlayerNumber, TempColor, Color).
+    validate_player_color(PlayerNumber, TempColor, AlreadyChosenColors, Color).
 
 
 % validate_player_color(+Input, -Color)
 % Validates the color chosen by the player.
-validate_player_color(_, Color, Color) :-
-    Color = b; Color = g,
+validate_player_color(_, Color, AlreadyChosenColors, Color) :-
+    memberchk(Color, [b,g]), % Check if the color is either b or g
+    \+ member(Color, AlreadyChosenColors), % Ensure color has not been chosen already
     !.
-validate_player_color(PlayerNumber, _, Color) :-
-    write('Invalid color. Please enter B for Blue or G for Green.\n'),
-    ask_player_color(PlayerNumber, Color).
+validate_player_color(PlayerNumber, _, AlreadyChosenColors, Color) :-
+    write('Invalid color or color already chosen. Please enter B for Blue or G for Green.\n'),
+    ask_player_color(PlayerNumber, AlreadyChosenColors, Color).
 
 % This is part of your existing code where you need to integrate the color selection
 process_play_choice(1) :-
-    ask_player_color(1, Player1Color),
-    ask_player_color(2, Player2Color),
+    ask_player_color(1, [], Player1Color),
+    ask_player_color(2, [Player1Color], Player2Color), % Pass Player1Color as already chosen
     write('Player 1 has chosen '), write_color(Player1Color), nl,
     write('Player 2 has chosen '), write_color(Player2Color), nl,
     sleep(2),
