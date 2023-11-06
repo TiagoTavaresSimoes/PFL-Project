@@ -179,15 +179,231 @@ connection(2, 5, 2, 4).
 connection(2, 5, 2, 6).
 connection(2, 6, 2, 5).
 
+% Hexagon 3
+connection(3, 1, 3, 2).
+connection(3, 2, 3, 1).
+connection(3, 2, 3, 3).
+connection(3, 3, 3, 2).
+connection(3, 3, 3, 4).
+connection(3, 4, 3, 3).
+connection(3, 4, 3, 5).
+connection(3, 5, 3, 4).
+connection(3, 5, 3, 6).
+connection(3, 6, 3, 5).
+
+% Hexagon 4
+connection(4, 1, 4, 2).
+connection(4, 2, 4, 1).
+connection(4, 2, 4, 3).
+connection(4, 3, 4, 2).
+connection(4, 3, 4, 4).
+connection(4, 4, 4, 3).
+connection(4, 4, 4, 5).
+connection(4, 5, 4, 4).
+connection(4, 5, 4, 6).
+connection(4, 6, 4, 5).
+connection(4, 6, 4, 1).
+connection(4, 1, 4, 6).
+
+% Hexagon 5
+connection(5, 1, 5, 2).
+connection(5, 2, 5, 1).
+connection(5, 2, 5, 3).
+connection(5, 3, 5, 2).
+connection(5, 3, 5, 4).
+connection(5, 4, 5, 3).
+connection(5, 4, 5, 5).
+connection(5, 5, 5, 4).
+connection(5, 5, 5, 6).
+connection(5, 6, 5, 5).
+connection(5, 6, 5, 1).
+connection(5, 1, 5, 6).
+
+% Hexagon 6
+connection(6, 1, 6, 2).
+connection(6, 2, 6, 1).
+connection(6, 2, 6, 3).
+connection(6, 3, 6, 2).
+connection(6, 3, 6, 4).
+connection(6, 4, 6, 3).
+connection(6, 4, 6, 5).
+connection(6, 5, 6, 4).
+connection(6, 5, 6, 6).
+connection(6, 6, 6, 5).
+connection(6, 6, 6, 1).
+connection(6, 1, 6, 6).
+
+% Hexagon 7
+connection(7, 1, 7, 2).
+connection(7, 2, 7, 1).
+connection(7, 2, 7, 3).
+connection(7, 3, 7, 2).
+connection(7, 3, 7, 4).
+connection(7, 4, 7, 3).
+connection(7, 4, 7, 5).
+connection(7, 5, 7, 4).
+connection(7, 5, 7, 6).
+connection(7, 6, 7, 5).
+
 
 % Inter-hexagon connections
 % formato: connection(Hexagon, Marble, AdjacentHexagon, AdjacentMarble)
 
 % Between hexagon 1 and 2
+connection(1, 2, 2, 6).
+connection(2, 6, 1, 2).
 connection(1, 3, 2, 1).
 connection(2, 1, 1, 3).
 connection(1, 3, 2, 5).
-connection(2, 5, 1, 3)
+connection(2, 5, 1, 3).
+connection(1, 4, 2, 5).
+connection(2, 5, 1, 4).
+connection(1, 4, 2, 6).
+connection(2, 6, 1, 4).
+
+% Between hexagon 1 and 3
+connection(1, 5, 3, 3).
+connection(3, 3, 1, 5).
+connection(1, 5, 3, 1).
+connection(3, 1, 1, 5).
+connection(1, 6, 3, 2).
+connection(3, 2, 1, 6).
+connection(1, 4, 3, 3).
+connection(3, 3, 1, 4).
+connection(1, 4, 3, 2).
+connection(3, 2, 1, 4).
+
+% Between hexagon 1 and 4
+connection(1, 3, 4, 1).
+connection(4, 1, 1, 3).
+connection(1, 3, 4, 2).
+connection(4, 2, 1, 3).
+connection(1, 4, 4, 2).
+connection(4, 2, 1, 4).
+connection(1, 4, 4, 6).
+connection(4, 6, 1, 4).
+connection(1, 5, 4, 1).
+connection(4, 1, 1, 5).
+connection(1, 5, 4, 6).
+connection(4, 6, 1, 5).
+
+% Between hexagon 2 and 5
+connection(2, 4, 5, 2).
+connection(5, 2, 2, 4).
+connection(2, 4, 5, 6).
+connection(5, 6, 2, 4).
+connection(2, 5, 5, 6).
+connection(5, 6, 2, 5).
+connection(2, 5, 5, 1).
+connection(5, 1, 2, 5).
+connection(2, 3, 5, 1).
+connection(5, 1, 2, 3).
+
+% Between hexagon 2 and 4
+connection(2, 6, 4, 2).
+connection(4, 2, 2, 6).
+connection(2, 6, 4, 1).
+connection(4, 1, 2, 6).
+connection(2, 5, 4, 1).
+connection(4, 1, 2, 5).
+connection(2, 5, 4, 3).
+connection(4, 3, 2, 5).
+connection(2, 4, 4, 3).
+connection(4, 3, 2, 4).
+connection(2, 4, 4, 2).
+connection(4, 2, 2, 4).
+
+% Between hexagon 3 and 4
+connection(3, 2, 4, 6).
+connection(4, 6, 3, 2).
+connection(3, 2, 4, 1).
+connection(4, 1, 3, 2).
+connection(3, 3, 4, 1).
+connection(4, 1, 3, 3).
+connection(3, 3, 4, 5).
+connection(4, 5, 3, 3).
+connection(3, 4, 4, 6).
+connection(4, 6, 3, 4).
+connection(3, 4, 4, 5).
+connection(4, 5, 3, 4).
+
+% Between hexagon 3 and 6
+connection(3, 4, 6, 6).
+connection(6, 6, 3, 4).
+connection(3, 4, 6, 2).
+connection(6, 2, 3, 4).
+connection(3, 3, 6, 2).
+connection(6, 2, 3, 3).
+connection(3, 3, 6, 1).
+connection(6, 1, 3, 3).
+connection(3, 5, 6, 1).
+connection(6, 1, 3, 5).
+
+% Between hexagon 4 and 5
+connection(4, 2, 5, 6).
+connection(5, 6, 4, 2).
+connection(4, 2, 5, 1).
+connection(5, 1, 4, 2).
+connection(4, 3, 5, 1).
+connection(5, 1, 4, 3).
+connection(4, 3, 5, 5).
+connection(5, 5, 4, 3).
+connection(4, 4, 5, 5).
+connection(5, 5, 4, 4).
+connection(4, 4, 5, 6).
+connection(5, 6, 4, 4).
+
+% Between hexagon 4 and 6
+connection(4, 4, 6, 2).
+connection(6, 2, 4, 4).
+connection(4, 4, 6, 3).
+connection(6, 3, 4, 4).
+connection(4, 5, 6, 1).
+connection(6, 1, 4, 5).
+connection(4, 5, 6, 3).
+connection(6, 3, 4, 5).
+connection(4, 6, 6, 1).
+connection(6, 1, 4, 6).
+connection(4, 6, 6, 2).
+connection(6, 2, 4, 6).
+
+% Between hexagon 4 and 7
+connection(4, 3, 7, 2).
+connection(7, 2, 4, 3).
+connection(4, 3, 7, 1).
+connection(7, 1, 4, 3).
+connection(4, 4, 7, 6).
+connection(7, 6, 4, 4).
+connection(4, 4, 7, 2).
+connection(7, 2, 4, 4).
+connection(4, 5, 7, 6).
+connection(7, 6, 4, 5).
+connection(4, 5, 7, 1).
+connection(7, 1, 4, 5).
+
+% Between hexagon 5 and 7
+connection(5, 4, 7, 2).
+connection(7, 2, 5, 4).
+connection(5, 5, 7, 1).
+connection(7, 1, 5, 5).
+connection(5, 5, 7, 3).
+connection(7, 3, 5, 5).
+connection(5, 6, 7, 1).
+connection(7, 1, 5, 6).
+connection(5, 6, 7, 2).
+connection(7, 2, 5, 6).
+
+% Between hexagon 6 and 7
+connection(6, 2, 7, 1).
+connection(7, 1, 6, 2).
+connection(6, 2, 7, 6).
+connection(7, 6, 6, 2).
+connection(6, 3, 7, 1).
+connection(7, 1, 6, 3).
+connection(6, 3, 7, 5).
+connection(7, 5, 6, 3).
+connection(6, 4, 7, 6).
+connection(7, 6, 6, 4).
 
 
 synchronize_neighbors(N) :-
