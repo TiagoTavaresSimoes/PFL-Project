@@ -417,15 +417,26 @@ sync_from_list(N, [M|Ms]) :-
     (sync_neighbors(N, Position, M); true),
     sync_from_list(N, Ms).
 
-winner_exists :-
+game_over :-
     hexagon(Hexagon, Marbles),
     nth1(Position, Marbles, Marble),
     Marble \= 'X',  % Exclude empty marbles
     dfs(Hexagon, Position, Marble, 1, [], _WinningPath),
     !.  % Cut to stop searching further when a winning sequence is found
 
+% dfs(+Hexagon, +Position, +Marble, +Depth, +Visited, -NewVisited)
+% Deep-first search to find a path where all positions contain the same Marble.
+% It stops when it reaches a Depth of 6 or if no further move can be made. 
+% If Depth 6 is reached, Visited is returned as NewVisited. 
+% For Depths less than 6, it attempts to find a valid connection to a next position 
+% where the next position has not been visited and contains the same Marble.
+% It then recurses with the updated Visited list.
+
+% Base case: stops recursion when a depth of 6 is reached and returns the Visited list.
 dfs(_, _, _, 6, Visited, Visited).
 
+% Recursive case: performs DFS for Depth < 6, finding connections with the same Marble,
+% and recursing into the next depth with the updated Visited list.
 dfs(Hexagon, Position, Marble, Depth, Visited, NewVisited) :-
     Depth < 6,
     connection(Hexagon, Position, NextHexagon, NextPosition),
@@ -435,31 +446,3 @@ dfs(Hexagon, Position, Marble, Depth, Visited, NewVisited) :-
     NextMarble = Marble,  % Ensure the marble type is the same
     NextDepth is Depth + 1,
     dfs(NextHexagon, NextPosition, Marble, NextDepth, [(Hexagon, Position)|Visited], NewVisited).
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

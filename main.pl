@@ -1,33 +1,14 @@
+% Including other files containing definitions of board, configs, data, utilities, and menu functionalities.
 :- consult(board).
 :- consult(configs).
 :- consult(data).
 :- consult(utils).
-
+:- consult(menu).
 
 % play/0
-% Starts the game and clears data when it ends 
+% Starts the game process by displaying the main menu and potentially initializing the game state
+% and starting the game cycle (commented out, suggesting it may be a part of future implementation).
 play :-
     main_menu.
     %configurations(GameState),      
     %game_cycle(GameState),
-
-% init_game_state(-GameState)
-% Logic to set up your default game state. Placeholder function; adjust to your needs.
-init_game_state(GameState) :-
-    % Example logic to set up your default game state.
-    % Replace with your actual logic.
-    init_state(10, GameState).
-
-% init_state(+Size, -GameState)
-% Initializes the game state (board) based on the given size.
-init_state(Size, GameState) :-
-    length(GameState, Size),
-    maplist(init_row(Size), GameState).
-
-% main/0
-% Main predicate for game execution.
-main :-
-    clear_console,
-    display_intro,
-    init_random_state,
-    init_game.
