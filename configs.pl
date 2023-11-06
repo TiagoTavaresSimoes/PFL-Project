@@ -23,7 +23,7 @@ game_loop :-
     clear_console,
     print_board,
     (   game_mode(bot_vs_bot) ->
-            bot_move(Hexagon, Direction, NumberOfSpins),
+            choose_move(Hexagon, Direction, NumberOfSpins),
             format('Bot chose hexagon number ~w, played ~w, and spun the wheel ~w times~n', [Hexagon,Direction,NumberOfSpins]),
             flush_output
         ;   prompt_for_hexagon_and_direction(Hexagon, Direction, NumberOfSpins)
@@ -92,9 +92,9 @@ handle_action(Hexagon, Direction) :-
     synchronize_neighbors(Hexagon).
 
 
-% bot_move(+BotName, -Hexagon, -Direction, -NumberOfSpins)
+% choose_move(+BotName, -Hexagon, -Direction, -NumberOfSpins)
 % Determines a bot move with a randomly chosen hexagon, direction, and number of spins.
-bot_move(BotName, Hexagon, Direction, NumberOfSpins) :-
+choose_move(BotName, Hexagon, Direction, NumberOfSpins) :-
     sleep(1),
     % Choose a random hexagon (1-7)
     random(RandomFloat),
@@ -103,6 +103,7 @@ bot_move(BotName, Hexagon, Direction, NumberOfSpins) :-
     % Randomly choose how many times to spin the hexagon (ex: 1-5 times for this example)
     random_in_range(1, 5, NumberOfSpins),
     display_bot_move(BotName, Hexagon, Direction, NumberOfSpins).
+
 
 
 % max_depth(-Depth)
@@ -132,7 +133,7 @@ minimax(Board, Depth, Hexagon, Direction, NumberOfSpins, Score) :-
             MovesScores
         ),
         % Decide whether to maximize or minimize based on whose turn it is
-        % For instance, if it's the bot's turn, we want to maximize the score.
+        % if it's the bot's turn, we want to maximize the score.
         ( is_maximizing_player(Board) ->
             max_member([Hexagon, Direction, NumberOfSpins, Score], MovesScores)
         ; otherwise ->
@@ -159,7 +160,6 @@ move(Board, Hexagon, Direction, NumberOfSpins, NewBoard) :-
 % evaluate_board(+Board, -Score)
 % Evaluates the board and assigns a score based on the current state.
 evaluate_board(Board, Score) :-
-    % You need to implement your evaluation logic based on the board state here.
     true.
 
 
@@ -235,7 +235,7 @@ game_loop_human_vs_bot :-
 
       % Bot Turn
       write('Bot\'s turn:\n'),
-      bot_move('Bot', BotHexagon, BotDirection, BotNumberOfSpins),
+      choose_move('Bot', BotHexagon, BotDirection, BotNumberOfSpins),
       %display_bot_move('Bot', BotHexagon, BotDirection, BotNumberOfSpins),
       sleep(4),
       repeat_spin(BotHexagon, BotDirection, BotNumberOfSpins),
@@ -253,14 +253,14 @@ game_loop_bot_vs_bot :-
     print_board,
     
     % Bot 1's move
-    bot_move('Bot 1', Hexagon1, Direction1, Spins1),
+    choose_move('Bot 1', Hexagon1, Direction1, Spins1),
     repeat_spin(Hexagon1, Direction1, Spins1),
     sleep(4),
     clear_console,
     print_board,
 
     % Bot 2's move
-    bot_move('Bot 2', Hexagon2, Direction2, Spins2),
+    choose_move('Bot 2', Hexagon2, Direction2, Spins2),
     repeat_spin(Hexagon2, Direction2, Spins2),
     sleep(4),
     clear_console,
@@ -309,5 +309,3 @@ gamestate([Board, player1, 0]) :-
 
 invalid_input :-
     write('Invalid input. Please try again.'), nl.
-
-
