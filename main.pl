@@ -12,3 +12,4 @@ play :-
     main_menu.
     %configurations(GameState),      
     %game_cycle(GameState),
+
