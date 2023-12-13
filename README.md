@@ -5,7 +5,7 @@
 - <b>Diogo Carvalho Pintado</b> up202108875 | Contribuição: 50%
 
 ## Grade:
-17.55/20.0
+17.55/20.00
 
 ## Instalação e Execução:
 
