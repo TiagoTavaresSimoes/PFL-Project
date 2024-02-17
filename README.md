@@ -1,8 +1,8 @@
 # Turma 2 - Flügelrad
 
 ## Trabalho realizado por:
-- <b>Tiago Tavares Simões</b> up202108857 | Contribuição: 50%
-- <b>Diogo Carvalho Pintado</b> up202108875 | Contribuição: 50%
+- <b>Tiago Tavares Simões</b> up202108857
+- <b>Diogo Carvalho Pintado</b> up202108875
 
 ## Grade:
 17.55/20.00
